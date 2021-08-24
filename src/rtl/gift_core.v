@@ -67,11 +67,73 @@ module gift_core(
   //----------------------------------------------------------------
   // Round functions with sub functions.
   //----------------------------------------------------------------
-  function [7 : 0] gm2(input [7 : 0] op);
+  function [3 : 0] gs(input [3 : 0] x);
     begin
-      gm2 = {op[6 : 0], 1'b0} ^ (8'h1b & {8{op[7]}});
+      case (x)
+        4'h0 : gs = 4'h1;
+        4'h1 : gs = 4'ha;
+        4'h2 : gs = 4'h4;
+        4'h3 : gs = 4'hc;
+        4'h4 : gs = 4'h6;
+        4'h5 : gs = 4'hf;
+        4'h6 : gs = 4'h3;
+        4'h7 : gs = 4'h9;
+        4'h8 : gs = 4'h2;
+        4'h9 : gs = 4'hd;
+        4'ha : gs = 4'hb;
+        4'hb : gs = 4'h7;
+        4'hc : gs = 4'h5;
+        4'hd : gs = 4'h0;
+        4'he : gs = 4'h8;
+        4'hf : gs = 4'he;
+        default:
+          begin
+          end
+      endcase // case (nybble)
     end
-  endfunction // gm2
+  endfunction // gs
+
+
+  // SubCells.
+  function [127 : 0] SubCells(input [127 : 0] x);
+    begin
+      SubCells[003 : 000] = gs(x[003 : 000]);
+      SubCells[007 : 004] = gs(x[007 : 004]);
+      SubCells[011 : 008] = gs(x[011 : 008]);
+      SubCells[015 : 012] = gs(x[015 : 012]);
+      SubCells[019 : 016] = gs(x[019 : 016]);
+      SubCells[023 : 020] = gs(x[023 : 020]);
+      SubCells[027 : 024] = gs(x[027 : 024]);
+      SubCells[031 : 028] = gs(x[031 : 028]);
+
+      SubCells[035 : 032] = gs(x[035 : 032]);
+      SubCells[039 : 036] = gs(x[039 : 036]);
+      SubCells[043 : 040] = gs(x[043 : 040]);
+      SubCells[047 : 044] = gs(x[047 : 044]);
+      SubCells[051 : 048] = gs(x[051 : 048]);
+      SubCells[055 : 052] = gs(x[055 : 052]);
+      SubCells[059 : 056] = gs(x[059 : 056]);
+      SubCells[063 : 060] = gs(x[063 : 060]);
+
+      SubCells[067 : 064] = gs(x[067 : 064]);
+      SubCells[071 : 068] = gs(x[071 : 068]);
+      SubCells[075 : 072] = gs(x[075 : 072]);
+      SubCells[079 : 076] = gs(x[079 : 076]);
+      SubCells[083 : 080] = gs(x[083 : 080]);
+      SubCells[087 : 084] = gs(x[087 : 084]);
+      SubCells[091 : 088] = gs(x[091 : 088]);
+      SubCells[095 : 092] = gs(x[095 : 092]);
+
+      SubCells[099 : 096] = gs(x[099 : 096]);
+      SubCells[103 : 100] = gs(x[103 : 100]);
+      SubCells[107 : 104] = gs(x[107 : 104]);
+      SubCells[111 : 108] = gs(x[111 : 108]);
+      SubCells[115 : 112] = gs(x[115 : 112]);
+      SubCells[119 : 116] = gs(x[119 : 116]);
+      SubCells[123 : 120] = gs(x[123 : 120]);
+      SubCells[127 : 124] = gs(x[127 : 124]);
+    end
+  endfunction // SubCells
 
 
   //----------------------------------------------------------------
@@ -149,6 +211,7 @@ module gift_core(
       state_new = 128'h0;
       state_we  = 1'h0;
 
+      state_new = SubCells(state_reg);
     end
 
 
