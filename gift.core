@@ -1,0 +1,44 @@
+CAPI=2:
+
+name : secworks:crypto:gift:0
+
+filesets:
+  rtl:
+    files:
+      - src/rtl/gift.v
+      - src/rtl/gift_core.v
+    file_type : verilogSource
+
+  tb:
+    files:
+      - src/tb/tb_gift.v
+      - src/tb/tb_gift_core.v
+    file_type : verilogSource
+
+  openlane: {files : [data/sky130.tcl : {file_type : tclSource}]}
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool : verilator
+    filesets : [rtl]
+    tools:
+      verilator:
+        mode : lint-only
+    toplevel : gift
+
+  sky130:
+    default_tool: openlane
+    filesets: [rtl, openlane]
+    toplevel: gift
+
+  tb_gift: &tb
+    default_tool: icarus
+    filesets: [rtl, tb]
+    toplevel : tb_gift
+
+  tb_gift_core:
+    <<: *tb
+    toplevel : tb_gift_core
