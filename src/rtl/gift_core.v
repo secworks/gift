@@ -136,12 +136,157 @@ module gift_core(
   endfunction // SubCells
 
 
+  function [127 : 0] PermBits(input [127 : 0] x);
+    begin
+      PermBits[000] = x[000];
+      PermBits[001] = x[033];
+      PermBits[002] = x[066];
+      PermBits[003] = x[099];
+      PermBits[004] = x[096];
+      PermBits[005] = x[001];
+      PermBits[006] = x[034];
+      PermBits[007] = x[067];
+      PermBits[008] = x[064];
+      PermBits[009] = x[097];
+      PermBits[010] = x[002];
+      PermBits[011] = x[035];
+      PermBits[012] = x[032];
+      PermBits[013] = x[065];
+      PermBits[014] = x[098];
+      PermBits[015] = x[003];
+
+      PermBits[016] = x[004];
+      PermBits[017] = x[037];
+      PermBits[018] = x[070];
+      PermBits[019] = x[103];
+      PermBits[020] = x[100];
+      PermBits[021] = x[005];
+      PermBits[022] = x[038];
+      PermBits[023] = x[071];
+      PermBits[024] = x[068];
+      PermBits[025] = x[101];
+      PermBits[026] = x[006];
+      PermBits[027] = x[039];
+      PermBits[028] = x[036];
+      PermBits[029] = x[069];
+      PermBits[030] = x[102];
+      PermBits[031] = x[007];
+
+      PermBits[032] = x[008];
+      PermBits[033] = x[041];
+      PermBits[034] = x[074];
+      PermBits[035] = x[107];
+      PermBits[036] = x[104];
+      PermBits[037] = x[009];
+      PermBits[038] = x[042];
+      PermBits[039] = x[075];
+      PermBits[040] = x[072];
+      PermBits[041] = x[105];
+      PermBits[042] = x[010];
+      PermBits[043] = x[043];
+      PermBits[044] = x[040];
+      PermBits[045] = x[073];
+      PermBits[046] = x[106];
+      PermBits[047] = x[011];
+
+      PermBits[048] = x[012];
+      PermBits[049] = x[045];
+      PermBits[050] = x[078];
+      PermBits[051] = x[111];
+      PermBits[052] = x[108];
+      PermBits[053] = x[013];
+      PermBits[054] = x[046];
+      PermBits[055] = x[079];
+      PermBits[056] = x[076];
+      PermBits[057] = x[109];
+      PermBits[058] = x[014];
+      PermBits[059] = x[047];
+      PermBits[060] = x[044];
+      PermBits[061] = x[077];
+      PermBits[062] = x[110];
+      PermBits[063] = x[015];
+
+      PermBits[064] = x[016];
+      PermBits[065] = x[049];
+      PermBits[066] = x[082];
+      PermBits[067] = x[115];
+      PermBits[068] = x[112];
+      PermBits[069] = x[017];
+      PermBits[070] = x[050];
+      PermBits[071] = x[083];
+      PermBits[072] = x[080];
+      PermBits[073] = x[113];
+      PermBits[074] = x[018];
+      PermBits[075] = x[051];
+      PermBits[076] = x[048];
+      PermBits[077] = x[081];
+      PermBits[078] = x[114];
+      PermBits[079] = x[019];
+
+      PermBits[080] = x[020];
+      PermBits[081] = x[053];
+      PermBits[082] = x[086];
+      PermBits[083] = x[119];
+      PermBits[084] = x[116];
+      PermBits[085] = x[021];
+      PermBits[086] = x[054];
+      PermBits[087] = x[087];
+      PermBits[088] = x[084];
+      PermBits[089] = x[117];
+      PermBits[090] = x[022];
+      PermBits[091] = x[055];
+      PermBits[092] = x[052];
+      PermBits[093] = x[085];
+      PermBits[094] = x[118];
+      PermBits[095] = x[023];
+
+      PermBits[096] = x[024];
+      PermBits[097] = x[057];
+      PermBits[098] = x[090];
+      PermBits[099] = x[123];
+      PermBits[100] = x[120];
+      PermBits[101] = x[025];
+      PermBits[102] = x[058];
+      PermBits[103] = x[091];
+      PermBits[104] = x[088];
+      PermBits[105] = x[121];
+      PermBits[106] = x[026];
+      PermBits[107] = x[059];
+      PermBits[108] = x[056];
+      PermBits[109] = x[089];
+      PermBits[110] = x[122];
+      PermBits[111] = x[027];
+
+      PermBits[112] = x[028];
+      PermBits[113] = x[061];
+      PermBits[114] = x[094];
+      PermBits[115] = x[127];
+      PermBits[116] = x[124];
+      PermBits[117] = x[029];
+      PermBits[118] = x[062];
+      PermBits[119] = x[095];
+      PermBits[120] = x[092];
+      PermBits[121] = x[125];
+      PermBits[122] = x[030];
+      PermBits[123] = x[063];
+      PermBits[124] = x[060];
+      PermBits[125] = x[093];
+      PermBits[126] = x[126];
+      PermBits[127] = x[031];
+    end
+  endfunction // PermBits
+
+
   //----------------------------------------------------------------
   // Registers including update variables and write enable.
   //----------------------------------------------------------------
   reg [127 : 0] state_reg;
   reg [127 : 0] state_new;
   reg           state_we;
+
+  reg [127 : 0] key_reg;
+  reg [127 : 0] key_new;
+  reg           key_we;
 
   reg           ready_reg;
   reg           ready_new;
@@ -161,8 +306,8 @@ module gift_core(
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
-  reg init_state;
-  reg update_state;
+  reg init_cipher;
+  reg update_cipher;
 
 
   //----------------------------------------------------------------
@@ -185,11 +330,15 @@ module gift_core(
         begin
           round_ctr_reg      <= 6'h0;
           state_reg          <= 128'h0;
+          key_reg            <= 128'h0;
           ready_reg          <= 1'h1;
           gift_core_ctrl_reg <= CTRL_IDLE;
         end
       else
         begin
+          if (key_we)
+            key_reg <= key_new;
+
           if (state_we)
             state_reg <= state_new;
 
@@ -210,17 +359,31 @@ module gift_core(
   //----------------------------------------------------------------
   always @*
     begin : gift_logic
+      reg [127 : 0] subcell_state;
+      reg [127 : 0] permute_state;
+
+      key_new   = 128'h0;
+      key_we    = 1'h0;
       state_new = 128'h0;
       state_we  = 1'h0;
 
-      if (init_state) begin
+      subcell_state = SubCells(state_reg);
+      permute_state = PermBits(subcell_state);
+
+      if (init_cipher) begin
+        key_new   = key;
+        key_we    = 1'h1;
         state_new = block;
         state_we  = 1'h1;
       end
 
-      if (update_state) begin
-        state_new = SubCells(state_reg) ^ key;
+
+      if (update_cipher) begin
+        state_new = permute_state ^ key_reg;
         state_we  = 1'h1;
+
+        key_new   = {key_reg[126 : 1], key_reg[127] ^ 1'h1};
+        key_we    = 1'h1;
       end
     end
 
@@ -259,8 +422,8 @@ module gift_core(
       ready_we           = 1'h0;
       round_ctr_rst      = 1'h0;
       round_ctr_inc      = 1'h0;
-      init_state         = 1'h0;
-      update_state       = 1'h0;
+      init_cipher        = 1'h0;
+      update_cipher      = 1'h0;
       gift_core_ctrl_new = CTRL_IDLE;
       gift_core_ctrl_we  = 1'h0;
 
@@ -271,7 +434,7 @@ module gift_core(
               begin
                 ready_new          = 1'h0;
                 ready_we           = 1'h1;
-                init_state         = 1'h1;
+                init_cipher        = 1'h1;
                 gift_core_ctrl_new = CTRL_INIT;
                 gift_core_ctrl_we  = 1'h1;
               end
@@ -279,7 +442,7 @@ module gift_core(
               begin
                 ready_new          = 1'h0;
                 ready_we           = 1'h1;
-                update_state       = 1'h1;
+                update_cipher      = 1'h1;
                 gift_core_ctrl_new = CTRL_NEXT;
                 gift_core_ctrl_we  = 1'h1;
               end
