@@ -382,7 +382,7 @@ module gift_core(
         state_new = permute_state ^ key_reg;
         state_we  = 1'h1;
 
-        key_new   = {key_reg[126 : 1], key_reg[127] ^ 1'h1};
+        key_new   = {key_reg[126 : 0], key_reg[127] ^ 1'h1};
         key_we    = 1'h1;
       end
     end
@@ -442,11 +442,12 @@ module gift_core(
               begin
                 ready_new          = 1'h0;
                 ready_we           = 1'h1;
-                update_cipher      = 1'h1;
+                round_ctr_rst      = 1'h1;
                 gift_core_ctrl_new = CTRL_NEXT;
                 gift_core_ctrl_we  = 1'h1;
               end
           end
+
 
         CTRL_INIT:
           begin
@@ -456,12 +457,19 @@ module gift_core(
             gift_core_ctrl_we  = 1'h1;
           end
 
+
         CTRL_NEXT:
           begin
-            ready_new          = 1'h1;
-            ready_we           = 1'h1;
-            gift_core_ctrl_new = CTRL_IDLE;
-            gift_core_ctrl_we  = 1'h1;
+            if (round_ctr_reg < GIFT128_ROUNDS) begin
+              update_cipher      = 1'h1;
+              round_ctr_inc      = 1'h1;
+            end
+            else begin
+              ready_new          = 1'h1;
+              ready_we           = 1'h1;
+              gift_core_ctrl_new = CTRL_IDLE;
+              gift_core_ctrl_we  = 1'h1;
+            end
           end
 
         default:
