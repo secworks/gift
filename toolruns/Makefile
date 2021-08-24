@@ -39,6 +39,9 @@
 CORE_SRC=../src/rtl/gift_core.v
 TB_CORE_SRC =../src/tb/tb_gift_core.v
 
+TOP_SRC=../src/rtl/gift.v $(CORE_SRC)
+TB_TOP_SRC =../src/tb/tb_gift.v
+
 CC = iverilog
 CC_FLAGS = -Wall
 
@@ -46,32 +49,43 @@ LINT = verilator
 LINT_FLAGS = +1364-2001ext+ --lint-only  -Wall -Wno-fatal -Wno-DECLFILENAME
 
 
-all: core.sim
+all: top.sim core.sim
+
+
+top.sim: $(TB_TOP_SRC) $(TOP_SRC)
+	$(CC) $(CC_FLAGS) -o top.sim $(TB_TOP_SRC) $(TOP_SRC)
 
 
 core.sim: $(TB_CORE_SRC) $(CORE_SRC)
 	$(CC) $(CC_FLAGS) -o core.sim $(TB_CORE_SRC) $(CORE_SRC)
 
 
+sim-top: top.sim
+	./top.sim
+
+
 sim-core: core.sim
 	./core.sim
 
 
-lint:  $(CORE_SRC)
-	$(LINT) $(LINT_FLAGS) $(CORE_SRC)
+lint:  $(TOP_SRC)
+	$(LINT) $(LINT_FLAGS) $(TOP_SRC)
 
 
 clean:
+	rm -f top.sim
 	rm -f core.sim
 
 
 help:
-	@echo "Build system for simulation of Prince core"
+	@echo "Build system for simulation of Gift core"
 	@echo ""
 	@echo "Supported targets:"
 	@echo "------------------"
 	@echo "all:          Build all simulation targets."
+	@echo "top.sim:      Build top level simulation target."
 	@echo "core.sim:     Build core level simulation target."
+	@echo "sim-top:      Run top level simulation."
 	@echo "sim-core:     Run core level simulation."
 	@echo "lint:         Lint all rtl source files."
 	@echo "clean:        Delete all built files."
