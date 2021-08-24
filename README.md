@@ -9,6 +9,8 @@ Just started. Not completed. Does not work. **Do Not Use**.
 [GIFT-128 (PDF)](https://eprint.iacr.org/2017/622.pdf) is a round based,
 lightweight block cipher. The key length and block size is 128 bits.
 
+Verification is done against [the official GIFT reference model](https://giftcipher.github.io/gift/).
+
 
 
 ## FuseSoC
