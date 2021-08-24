@@ -277,6 +277,17 @@ module gift_core(
   endfunction // PermBits
 
 
+  function [127 : 0] AddRoundKey(input [127 : 0] state,
+                                 input [127 : 0] k);
+    begin : adk
+      reg [31 : 0] u;
+      reg [31 : 0] v;
+
+      AddRoundKey = state ^ k;
+    end
+  endfunction // AddRoundkey
+
+
   //----------------------------------------------------------------
   // Registers including update variables and write enable.
   //----------------------------------------------------------------
@@ -287,6 +298,10 @@ module gift_core(
   reg [127 : 0] key_reg;
   reg [127 : 0] key_new;
   reg           key_we;
+
+  reg [5 : 0]   rc_reg;
+  reg [5 : 0]   rc_new;
+  reg           rc_we;
 
   reg           ready_reg;
   reg           ready_new;
@@ -331,6 +346,7 @@ module gift_core(
           round_ctr_reg      <= 6'h0;
           state_reg          <= 128'h0;
           key_reg            <= 128'h0;
+          rc_reg             <= 6'h0;
           ready_reg          <= 1'h1;
           gift_core_ctrl_reg <= CTRL_IDLE;
         end
@@ -341,6 +357,9 @@ module gift_core(
 
           if (state_we)
             state_reg <= state_new;
+
+          if (rc_we)
+            rc_reg <= rc_new;
 
           if (ready_we)
             ready_reg <= ready_new;
@@ -361,25 +380,34 @@ module gift_core(
     begin : gift_logic
       reg [127 : 0] subcell_state;
       reg [127 : 0] permute_state;
+      reg [127 : 0] addkey_state;
 
       key_new   = 128'h0;
       key_we    = 1'h0;
+      rc_new    = 6'h0;
+      rc_we     = 1'h0;
       state_new = 128'h0;
       state_we  = 1'h0;
 
       subcell_state = SubCells(state_reg);
       permute_state = PermBits(subcell_state);
+      addkey_state  = AddRoundKey(permute_state, key_reg);
 
       if (init_cipher) begin
         key_new   = key;
         key_we    = 1'h1;
+        rc_new    = 6'h0;
+        rc_we     = 1'h1;
         state_new = block;
         state_we  = 1'h1;
       end
 
 
       if (update_cipher) begin
-        state_new = permute_state ^ key_reg;
+        rc_new =  {rc_reg[4 : 0], rc_reg[5] ^ rc_reg[4] ^ 1'h1};
+        rc_we  = 1'h1;
+
+        state_new = addkey_state;
         state_we  = 1'h1;
 
         key_new   = {key_reg[126 : 0], key_reg[127] ^ 1'h1};
