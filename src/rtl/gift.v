@@ -72,8 +72,6 @@ module gift(
   localparam ADDR_KEY3         = 8'h13;
 
   localparam ADDR_BLOCK0       = 8'h20;
-  localparam ADDR_BLOCK1       = 8'h21;
-  localparam ADDR_BLOCK2       = 8'h22;
   localparam ADDR_BLOCK3       = 8'h23;
 
   localparam ADDR_RESULT0      = 8'h30;

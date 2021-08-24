@@ -161,6 +161,8 @@ module gift_core(
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
+  reg init_state;
+  reg update_state;
 
 
   //----------------------------------------------------------------
@@ -211,7 +213,15 @@ module gift_core(
       state_new = 128'h0;
       state_we  = 1'h0;
 
-      state_new = SubCells(state_reg);
+      if (init_state) begin
+        state_new = block;
+        state_we  = 1'h1;
+      end
+
+      if (update_state) begin
+        state_new = SubCells(state_reg) ^ key;
+        state_we  = 1'h1;
+      end
     end
 
 
@@ -249,6 +259,8 @@ module gift_core(
       ready_we           = 1'h0;
       round_ctr_rst      = 1'h0;
       round_ctr_inc      = 1'h0;
+      init_state         = 1'h0;
+      update_state       = 1'h0;
       gift_core_ctrl_new = CTRL_IDLE;
       gift_core_ctrl_we  = 1'h0;
 
@@ -259,6 +271,7 @@ module gift_core(
               begin
                 ready_new          = 1'h0;
                 ready_we           = 1'h1;
+                init_state         = 1'h1;
                 gift_core_ctrl_new = CTRL_INIT;
                 gift_core_ctrl_we  = 1'h1;
               end
@@ -266,6 +279,7 @@ module gift_core(
               begin
                 ready_new          = 1'h0;
                 ready_we           = 1'h1;
+                update_state       = 1'h1;
                 gift_core_ctrl_new = CTRL_NEXT;
                 gift_core_ctrl_we  = 1'h1;
               end
