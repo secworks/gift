@@ -222,6 +222,36 @@ module tb_gift_core();
 
 
   //----------------------------------------------------------------
+  //----------------------------------------------------------------
+  task enctest(input integer tc, input reg [127 : 0] key,
+               input reg [127 : 0] plaintext, input reg [63 : 0] expected);
+    begin
+      $display("*** TC%01d - encryption started.", tc);
+      tb_key     = key;
+      tb_block   = plaintext;
+      tb_next    = 1'h1;
+      #(CLK_PERIOD);
+      tb_next    = 1'h0;
+      wait_ready();
+      $display("*** TC%01d - encryption completed.", tc);
+      #(CLK_PERIOD);
+      dump_dut_state();
+
+      if (tb_result == expected)
+        $display("*** TC%01d correct ciphertext generated: 0x%016x",
+                 tc, tb_result);
+      else
+        begin
+          error_ctr = error_ctr + 1;
+          $display("*** TC%01d incorrect ciphertext generated", tc);
+          $display("*** TC%01d expected: 0x%016x", tc, expected);
+          $display("*** TC%01d got:      0x%016x", tc, tb_result);
+        end
+    end
+  endtask // enctest
+
+
+  //----------------------------------------------------------------
   // gift_core_test
   //
   // Test vectors from:
@@ -233,6 +263,18 @@ module tb_gift_core();
 
       init_sim();
       reset_dut();
+
+      enctest(1, 128'h0, 128'h0,
+              128'hcd0bd738_388ad3f6_68b15a36_ceb6ff92);
+
+      enctest(2, 128'hfedcba98_76543210_fedcba98_76543210,
+              128'hfedcba98_76543210_fedcba98_76543210,
+              128'h8422241a_6dbf5a93_46af4684_09ee0152);
+
+      enctest(3, 128'hd0f5c59a_7700d3e7_99028fa9_f90ad837,
+              128'he39c141f_a57dba43_f08a85b6_a91f86c1,
+              128'h13ede67c_bdcc3dbf_400a62d6_977265ea);
+
 
       display_test_result();
       $display("");
