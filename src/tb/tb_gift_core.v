@@ -224,28 +224,32 @@ module tb_gift_core();
   //----------------------------------------------------------------
   //----------------------------------------------------------------
   task enctest(input integer tc, input reg [127 : 0] key,
-               input reg [127 : 0] plaintext, input reg [63 : 0] expected);
+               input reg [127 : 0] plaintext, input reg [127 : 0] expected);
     begin
+      tb_monitor = 1'h1;
+      #(CLK_PERIOD);
       $display("*** TC%01d - encryption started.", tc);
       tb_key     = key;
       tb_block   = plaintext;
+
       tb_next    = 1'h1;
       #(CLK_PERIOD);
       tb_next    = 1'h0;
+
       wait_ready();
       $display("*** TC%01d - encryption completed.", tc);
       #(CLK_PERIOD);
-      dump_dut_state();
+      tb_monitor = 0;
 
       if (tb_result == expected)
-        $display("*** TC%01d correct ciphertext generated: 0x%016x",
+        $display("*** TC%01d correct ciphertext generated: 0x%032x",
                  tc, tb_result);
       else
         begin
           error_ctr = error_ctr + 1;
           $display("*** TC%01d incorrect ciphertext generated", tc);
-          $display("*** TC%01d expected: 0x%016x", tc, expected);
-          $display("*** TC%01d got:      0x%016x", tc, tb_result);
+          $display("*** TC%01d expected: 0x%032x", tc, expected);
+          $display("*** TC%01d got:      0x%032x", tc, tb_result);
         end
     end
   endtask // enctest
