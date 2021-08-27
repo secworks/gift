@@ -278,7 +278,8 @@ module gift_core(
 
 
   function [127 : 0] AddRoundKey(input [127 : 0] state,
-                                 input [127 : 0] k);
+                                 input [127 : 0] k,
+                                 input [5 : 0]   rc);
     begin : ark
       reg [31 : 0] u;
       reg [31 : 0] v;
@@ -293,6 +294,14 @@ module gift_core(
         s[(4 * i + 2)] = state[(4 * i + 2)] ^ u[i];
         s[(4 * i + 1)] = state[(4 * i + 1)] ^ v[i];
       end
+
+      s[127] = s[127] ^ 1'h1;
+      s[023] = s[023] ^ rc[5];
+      s[019] = s[019] ^ rc[4];
+      s[015] = s[015] ^ rc[3];
+      s[011] = s[011] ^ rc[2];
+      s[007] = s[007] ^ rc[1];
+      s[003] = s[003] ^ rc[0];
 
       AddRoundKey = s;
     end
@@ -310,6 +319,13 @@ module gift_core(
       UpdateKey = {rot2_k1, rot12_k0, k[127 : 032]};
     end
   endfunction // UpdateKey
+
+
+  function [127 : 0] UpdateConstant(input [5 : 0] rc);
+    begin
+      UpdateConstant = {rc[4 : 0], rc[5] ^ rc[4] ^ 1'h1};
+    end
+  endfunction // UpdateConstant
 
 
   //----------------------------------------------------------------
@@ -413,9 +429,11 @@ module gift_core(
       state_new = 128'h0;
       state_we  = 1'h0;
 
+      key_new       = UpdateKey(key_reg);
+      rc_new        = UpdateConstant(rc_reg);
       subcell_state = SubCells(state_reg);
       permute_state = PermBits(subcell_state);
-      addkey_state  = AddRoundKey(permute_state, key_reg);
+      addkey_state  = AddRoundKey(permute_state, key_reg, rc_new);
 
       if (init_cipher) begin
         key_new   = key;
@@ -425,17 +443,11 @@ module gift_core(
         state_new = block;
         state_we  = 1'h1;
       end
-
-
-      if (update_cipher) begin
-        rc_new =  {rc_reg[4 : 0], rc_reg[5] ^ rc_reg[4] ^ 1'h1};
-        rc_we  = 1'h1;
-
+      else if (update_cipher) begin
+        key_we    = 1'h1;
+        rc_we     = 1'h1;
         state_new = addkey_state;
         state_we  = 1'h1;
-
-        key_new   = {key_reg[126 : 0], key_reg[127] ^ 1'h1};
-        key_we    = 1'h1;
       end
     end
 

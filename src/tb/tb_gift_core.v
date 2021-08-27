@@ -125,11 +125,24 @@ module tb_gift_core();
       $display("------------");
       $display("Cycle: %08d", cycle_ctr);
       $display("Inputs and outputs:");
-      $display("init = 0x%01x, next = 0x%01x", dut.init, dut.next);
-      $display("key   = 0x%016x ", dut.key);
-      $display("block = 0x%08x", dut.block);
-      $display("ready  = 0x%01x", dut.ready);
-      $display("result = 0x%08x", dut.result);
+      $display("init:   0x%01x, next: 0x%01x, ready: 0x%01x",
+               dut.init, dut.next, dut.ready);
+      $display("key:    0x%032x ", dut.key);
+      $display("block:  0x%032x", dut.block);
+      $display("result: 0x%032x", dut.result);
+      $display("");
+      $display("Internal state:");
+      $display("state_reg: 0x%032x, state_new: 0x%032x, state_we: 0x%1x",
+               dut.state_reg, dut.state_new, dut.state_we);
+      $display("key_reg:   0x%032x, key_new:   0x%032x, key_we:   0x%1x",
+               dut.key_reg, dut.key_new, dut.key_we);
+      $display("rc_reg:    0x%08x, rc_new:   0x%08x, rc_we:   0x%1x",
+               dut.rc_reg, dut.rc_new, dut.rc_we);
+      $display("");
+      $display("Intermediate values:");
+      $display("subcell_state: 0x%032x", dut.gift_logic.subcell_state);
+      $display("permute_state: 0x%032x", dut.gift_logic.permute_state);
+      $display("addkey_state:  0x%032x", dut.gift_logic.addkey_state);
       $display("");
     end
   endtask // dump_dut_state
