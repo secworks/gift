@@ -121,6 +121,7 @@ module tb_gift_core();
   //----------------------------------------------------------------
   task dump_dut_state;
     begin
+      $display("");
       $display("State of DUT");
       $display("------------");
       $display("Cycle: %08d", cycle_ctr);
@@ -131,18 +132,24 @@ module tb_gift_core();
       $display("block:  0x%032x", dut.block);
       $display("result: 0x%032x", dut.result);
       $display("");
-      $display("Internal state:");
-      $display("state_reg: 0x%032x, state_new: 0x%032x, state_we: 0x%1x",
-               dut.state_reg, dut.state_new, dut.state_we);
-      $display("key_reg:   0x%032x, key_new:   0x%032x, key_we:   0x%1x",
-               dut.key_reg, dut.key_new, dut.key_we);
-      $display("rc_reg:    0x%08x, rc_new:   0x%08x, rc_we:   0x%1x",
-               dut.rc_reg, dut.rc_new, dut.rc_we);
-      $display("");
       $display("Intermediate values:");
       $display("subcell_state: 0x%032x", dut.gift_logic.subcell_state);
       $display("permute_state: 0x%032x", dut.gift_logic.permute_state);
       $display("addkey_state:  0x%032x", dut.gift_logic.addkey_state);
+      $display("");
+      $display("Internal state:");
+      $display("ready_reg:          0x%1x,   ready_new: 0x%1x,   ready_we: 0x%1x",
+               dut.ready_reg, dut.ready_new, dut.ready_we);
+      $display("state_reg:          0x%032x, state_new: 0x%032x, state_we: 0x%1x",
+               dut.state_reg, dut.state_new, dut.state_we);
+      $display("key_reg:            0x%032x, key_new:   0x%032x, key_we:   0x%1x",
+               dut.key_reg, dut.key_new, dut.key_we);
+      $display("rc_reg:             0x%08x, rc_new:   0x%08x, rc_we:   0x%1x",
+               dut.rc_reg, dut.rc_new, dut.rc_we);
+      $display("round_ctr_reg:      0x%08x, round_ctr_new: 0x%08x, round_ctr_we: 0x%1x",
+               dut.round_ctr_reg, dut.round_ctr_new, dut.round_ctr_we);
+      $display("gift_core_ctrl_reg: 0x%08x, gift_core_ctrl_new: 0x%08x, gift_core_ctrl_we: 0x%1x",
+               dut.gift_core_ctrl_reg, dut.gift_core_ctrl_new, dut.gift_core_ctrl_we);
       $display("");
     end
   endtask // dump_dut_state
@@ -291,7 +298,6 @@ module tb_gift_core();
       enctest(3, 128'hd0f5c59a_7700d3e7_99028fa9_f90ad837,
               128'he39c141f_a57dba43_f08a85b6_a91f86c1,
               128'h13ede67c_bdcc3dbf_400a62d6_977265ea);
-
 
       display_test_result();
       $display("");
