@@ -506,6 +506,7 @@ module gift_core(
               begin
                 ready_new          = 1'h0;
                 ready_we           = 1'h1;
+                init_cipher        = 1'h1;
                 round_ctr_rst      = 1'h1;
                 gift_core_ctrl_new = CTRL_NEXT;
                 gift_core_ctrl_we  = 1'h1;
