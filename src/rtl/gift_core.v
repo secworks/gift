@@ -279,13 +279,37 @@ module gift_core(
 
   function [127 : 0] AddRoundKey(input [127 : 0] state,
                                  input [127 : 0] k);
-    begin : adk
+    begin : ark
       reg [31 : 0] u;
       reg [31 : 0] v;
+      reg [127 : 0] s;
+      integer i;
 
-      AddRoundKey = state ^ k;
+      u = k[095 : 064];
+      v = k[031 : 000];
+
+      s = state;
+      for (i = 0 ; i < 32 ; i = i + 1) begin
+        s[(4 * i + 2)] = state[(4 * i + 2)] ^ u[i];
+        s[(4 * i + 1)] = state[(4 * i + 1)] ^ v[i];
+      end
+
+      AddRoundKey = s;
     end
   endfunction // AddRoundkey
+
+
+  function [127 : 0] UpdateKey(input [127 : 0] k);
+    begin : udk
+      reg [15 : 0] rot12_k0;
+      reg [15 : 0] rot2_k1;
+
+      rot12_k0 = {k[011 : 000], k[015 : 012]};
+      rot2_k1  = {k[017 : 016], k[031 : 018]};
+
+      UpdateKey = {rot2_k1, rot12_k0, k[127 : 032]};
+    end
+  endfunction // UpdateKey
 
 
   //----------------------------------------------------------------
