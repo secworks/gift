@@ -72,7 +72,7 @@ sim-core: core.sim
 
 
 lint:  $(TOP_SRC)
-	$(LINT) $(LINT_FLAGS) $(TOP_SRC)
+	$(LINT) $(LINT_FLAGS) +incdir+../src/rtl $(TOP_SRC)
 
 
 clean:

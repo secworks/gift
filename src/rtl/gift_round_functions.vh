@@ -37,6 +37,10 @@
 //
 //======================================================================
 
+  //----------------------------------------------------------------
+  // Encyption functions.
+  //----------------------------------------------------------------
+
   function [3 : 0] gs(input [3 : 0] x);
     begin
       case (x)
@@ -64,7 +68,6 @@
   endfunction // gs
 
 
-  // SubCells.
   function [127 : 0] SubCells(input [127 : 0] x);
     begin
       SubCells[003 : 000] = gs(x[003 : 000]);
@@ -296,6 +299,210 @@
       UpdateConstant = {rc[4 : 0], rc[5] ^ rc[4] ^ 1'h1};
     end
   endfunction // UpdateConstant
+
+
+  //----------------------------------------------------------------
+  // Decryption functions.
+  //----------------------------------------------------------------
+  function [3 : 0] inv_gs(input [3 : 0] x);
+    begin
+      case (x)
+       4'h0 : inv_gs = 4'hd;
+       4'h1 : inv_gs = 4'h0;
+       4'h2 : inv_gs = 4'h8;
+       4'h3 : inv_gs = 4'h6;
+       4'h4 : inv_gs = 4'h2;
+       4'h5 : inv_gs = 4'hc;
+       4'h6 : inv_gs = 4'h4;
+       4'h7 : inv_gs = 4'hb;
+       4'h8 : inv_gs = 4'he;
+       4'h9 : inv_gs = 4'h7;
+       4'ha : inv_gs = 4'h1;
+       4'hb : inv_gs = 4'ha;
+       4'hc : inv_gs = 4'h3;
+       4'hd : inv_gs = 4'h9;
+       4'he : inv_gs = 4'hf;
+       4'hf : inv_gs = 4'h5;
+        default:
+          begin
+          end
+      endcase // case (x)
+    end
+  endfunction // inv_gs
+
+
+
+  function [127 : 0] InvSubCells(input [127 : 0] x);
+    begin
+      InvSubCells[003 : 000] = inv_gs(x[003 : 000]);
+      InvSubCells[007 : 004] = inv_gs(x[007 : 004]);
+      InvSubCells[011 : 008] = inv_gs(x[011 : 008]);
+      InvSubCells[015 : 012] = inv_gs(x[015 : 012]);
+      InvSubCells[019 : 016] = inv_gs(x[019 : 016]);
+      InvSubCells[023 : 020] = inv_gs(x[023 : 020]);
+      InvSubCells[027 : 024] = inv_gs(x[027 : 024]);
+      InvSubCells[031 : 028] = inv_gs(x[031 : 028]);
+      InvSubCells[035 : 032] = inv_gs(x[035 : 032]);
+      InvSubCells[039 : 036] = inv_gs(x[039 : 036]);
+      InvSubCells[043 : 040] = inv_gs(x[043 : 040]);
+      InvSubCells[047 : 044] = inv_gs(x[047 : 044]);
+      InvSubCells[051 : 048] = inv_gs(x[051 : 048]);
+      InvSubCells[055 : 052] = inv_gs(x[055 : 052]);
+      InvSubCells[059 : 056] = inv_gs(x[059 : 056]);
+      InvSubCells[063 : 060] = inv_gs(x[063 : 060]);
+      InvSubCells[067 : 064] = inv_gs(x[067 : 064]);
+      InvSubCells[071 : 068] = inv_gs(x[071 : 068]);
+      InvSubCells[075 : 072] = inv_gs(x[075 : 072]);
+      InvSubCells[079 : 076] = inv_gs(x[079 : 076]);
+      InvSubCells[083 : 080] = inv_gs(x[083 : 080]);
+      InvSubCells[087 : 084] = inv_gs(x[087 : 084]);
+      InvSubCells[091 : 088] = inv_gs(x[091 : 088]);
+      InvSubCells[095 : 092] = inv_gs(x[095 : 092]);
+      InvSubCells[099 : 096] = inv_gs(x[099 : 096]);
+      InvSubCells[103 : 100] = inv_gs(x[103 : 100]);
+      InvSubCells[107 : 104] = inv_gs(x[107 : 104]);
+      InvSubCells[111 : 108] = inv_gs(x[111 : 108]);
+      InvSubCells[115 : 112] = inv_gs(x[115 : 112]);
+      InvSubCells[119 : 116] = inv_gs(x[119 : 116]);
+      InvSubCells[123 : 120] = inv_gs(x[123 : 120]);
+      InvSubCells[127 : 124] = inv_gs(x[127 : 124]);
+    end
+  endfunction // InvSubCells
+
+
+
+  function [127 : 0] InvPermBits(input [127 : 0] x);
+    begin
+      InvPermBits[000] = x[000];
+      InvPermBits[001] = x[033];
+      InvPermBits[002] = x[066];
+      InvPermBits[003] = x[099];
+      InvPermBits[004] = x[096];
+      InvPermBits[005] = x[001];
+      InvPermBits[006] = x[034];
+      InvPermBits[007] = x[067];
+      InvPermBits[008] = x[064];
+      InvPermBits[009] = x[097];
+      InvPermBits[010] = x[002];
+      InvPermBits[011] = x[035];
+      InvPermBits[012] = x[032];
+      InvPermBits[013] = x[065];
+      InvPermBits[014] = x[098];
+      InvPermBits[015] = x[003];
+      InvPermBits[016] = x[004];
+      InvPermBits[017] = x[037];
+      InvPermBits[018] = x[070];
+      InvPermBits[019] = x[103];
+      InvPermBits[020] = x[100];
+      InvPermBits[021] = x[005];
+      InvPermBits[022] = x[038];
+      InvPermBits[023] = x[071];
+      InvPermBits[024] = x[068];
+      InvPermBits[025] = x[101];
+      InvPermBits[026] = x[006];
+      InvPermBits[027] = x[039];
+      InvPermBits[028] = x[036];
+      InvPermBits[029] = x[069];
+      InvPermBits[030] = x[102];
+      InvPermBits[031] = x[007];
+      InvPermBits[032] = x[008];
+      InvPermBits[033] = x[041];
+      InvPermBits[034] = x[074];
+      InvPermBits[035] = x[107];
+      InvPermBits[036] = x[104];
+      InvPermBits[037] = x[009];
+      InvPermBits[038] = x[042];
+      InvPermBits[039] = x[075];
+      InvPermBits[040] = x[072];
+      InvPermBits[041] = x[105];
+      InvPermBits[042] = x[010];
+      InvPermBits[043] = x[043];
+      InvPermBits[044] = x[040];
+      InvPermBits[045] = x[073];
+      InvPermBits[046] = x[106];
+      InvPermBits[047] = x[011];
+      InvPermBits[048] = x[012];
+      InvPermBits[049] = x[045];
+      InvPermBits[050] = x[078];
+      InvPermBits[051] = x[111];
+      InvPermBits[052] = x[108];
+      InvPermBits[053] = x[013];
+      InvPermBits[054] = x[046];
+      InvPermBits[055] = x[079];
+      InvPermBits[056] = x[076];
+      InvPermBits[057] = x[109];
+      InvPermBits[058] = x[014];
+      InvPermBits[059] = x[047];
+      InvPermBits[060] = x[044];
+      InvPermBits[061] = x[077];
+      InvPermBits[062] = x[110];
+      InvPermBits[063] = x[015];
+      InvPermBits[064] = x[016];
+      InvPermBits[065] = x[049];
+      InvPermBits[066] = x[082];
+      InvPermBits[067] = x[115];
+      InvPermBits[068] = x[112];
+      InvPermBits[069] = x[017];
+      InvPermBits[070] = x[050];
+      InvPermBits[071] = x[083];
+      InvPermBits[072] = x[080];
+      InvPermBits[073] = x[113];
+      InvPermBits[074] = x[018];
+      InvPermBits[075] = x[051];
+      InvPermBits[076] = x[048];
+      InvPermBits[077] = x[081];
+      InvPermBits[078] = x[114];
+      InvPermBits[079] = x[019];
+      InvPermBits[080] = x[020];
+      InvPermBits[081] = x[053];
+      InvPermBits[082] = x[086];
+      InvPermBits[083] = x[119];
+      InvPermBits[084] = x[116];
+      InvPermBits[085] = x[021];
+      InvPermBits[086] = x[054];
+      InvPermBits[087] = x[087];
+      InvPermBits[088] = x[084];
+      InvPermBits[089] = x[117];
+      InvPermBits[090] = x[022];
+      InvPermBits[091] = x[055];
+      InvPermBits[092] = x[052];
+      InvPermBits[093] = x[085];
+      InvPermBits[094] = x[118];
+      InvPermBits[095] = x[023];
+      InvPermBits[096] = x[024];
+      InvPermBits[097] = x[057];
+      InvPermBits[098] = x[090];
+      InvPermBits[099] = x[123];
+      InvPermBits[100] = x[120];
+      InvPermBits[101] = x[025];
+      InvPermBits[102] = x[058];
+      InvPermBits[103] = x[091];
+      InvPermBits[104] = x[088];
+      InvPermBits[105] = x[121];
+      InvPermBits[106] = x[026];
+      InvPermBits[107] = x[059];
+      InvPermBits[108] = x[056];
+      InvPermBits[109] = x[089];
+      InvPermBits[110] = x[122];
+      InvPermBits[111] = x[027];
+      InvPermBits[112] = x[028];
+      InvPermBits[113] = x[061];
+      InvPermBits[114] = x[094];
+      InvPermBits[115] = x[127];
+      InvPermBits[116] = x[124];
+      InvPermBits[117] = x[029];
+      InvPermBits[118] = x[062];
+      InvPermBits[119] = x[095];
+      InvPermBits[120] = x[092];
+      InvPermBits[121] = x[125];
+      InvPermBits[122] = x[030];
+      InvPermBits[123] = x[063];
+      InvPermBits[124] = x[060];
+      InvPermBits[125] = x[093];
+      InvPermBits[126] = x[126];
+      InvPermBits[127] = x[031];
+    end
+  endfunction // InvPermBits
 
 
 //======================================================================
