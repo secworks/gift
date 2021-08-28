@@ -59,7 +59,7 @@ module tb_gift_core();
 
   reg            tb_clk;
   reg            tb_reset_n;
-  reg            tb_init;
+  reg            tb_encdec;
   reg            tb_next;
   wire           tb_ready;
   reg [127 : 0]  tb_key;
@@ -74,7 +74,7 @@ module tb_gift_core();
                 .clk(tb_clk),
                 .reset_n(tb_reset_n),
 
-                .init(tb_init),
+                .encdec(tb_encdec),
                 .next(tb_next),
                 .ready(tb_ready),
 
@@ -126,8 +126,8 @@ module tb_gift_core();
       $display("------------");
       $display("Cycle: %08d", cycle_ctr);
       $display("Inputs and outputs:");
-      $display("init:   0x%01x, next: 0x%01x, ready: 0x%01x",
-               dut.init, dut.next, dut.ready);
+      $display("next:   0x%01x, encdec: 0x%01x, ready: 0x%01x",
+               dut.next, dut.encdec, dut.ready);
       $display("key:    0x%032x ", dut.key);
       $display("block:  0x%032x", dut.block);
       $display("result: 0x%032x", dut.result);
@@ -233,7 +233,7 @@ module tb_gift_core();
 
       tb_clk     = 0;
       tb_reset_n = 1;
-      tb_init    = 0;
+      tb_encdec  = 0;
       tb_next    = 0;
       tb_key     = 128'h0;
       tb_block   = 128'h0;
@@ -251,6 +251,7 @@ module tb_gift_core();
       tb_monitor = 1'h0;
       #(CLK_PERIOD);
       $display("*** TC%01d - encryption started.", tc_ctr);
+      tb_encdec  = 1;
       tb_key     = key;
       tb_block   = plaintext;
 

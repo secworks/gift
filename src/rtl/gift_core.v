@@ -43,7 +43,7 @@ module gift_core(
                 input wire            clk,
                 input wire            reset_n,
 
-                input wire            init,
+                input wire            encdec,
                 input wire            next,
                 output wire           ready,
 
@@ -73,21 +73,24 @@ module gift_core(
   //----------------------------------------------------------------
   // Registers including update variables and write enable.
   //----------------------------------------------------------------
-  reg [127 : 0] state_reg;
-  reg [127 : 0] state_new;
-  reg           state_we;
-
   reg [127 : 0] key_reg;
   reg [127 : 0] key_new;
   reg           key_we;
 
-  reg [5 : 0]   rc_reg;
-  reg [5 : 0]   rc_new;
-  reg           rc_we;
+  reg           encdec_reg;
+  reg           encdec_we;
 
   reg           ready_reg;
   reg           ready_new;
   reg           ready_we;
+
+  reg [127 : 0] state_reg;
+  reg [127 : 0] state_new;
+  reg           state_we;
+
+  reg [5 : 0]   rc_reg;
+  reg [5 : 0]   rc_new;
+  reg           rc_we;
 
   reg [5 : 0]   round_ctr_reg;
   reg [5 : 0]   round_ctr_new;
@@ -129,6 +132,7 @@ module gift_core(
           state_reg          <= 128'h0;
           key_reg            <= 128'h0;
           rc_reg             <= 6'h0;
+          encdec_reg         <= 1'h0;
           ready_reg          <= 1'h1;
           gift_core_ctrl_reg <= CTRL_IDLE;
         end
@@ -142,6 +146,9 @@ module gift_core(
 
           if (rc_we)
             rc_reg <= rc_new;
+
+          if (encdec_we)
+            encdec_reg <= encdec;
 
           if (ready_we)
             ready_reg <= ready_new;
@@ -168,6 +175,7 @@ module gift_core(
       key_we    = 1'h0;
       rc_new    = 6'h0;
       rc_we     = 1'h0;
+      encdec_we = 1'h0;
       state_new = 128'h0;
       state_we  = 1'h0;
 
@@ -182,6 +190,7 @@ module gift_core(
         key_we    = 1'h1;
         rc_new    = 6'h0;
         rc_we     = 1'h1;
+        encdec_we = 1'h1;
         state_new = block;
         state_we  = 1'h1;
       end
@@ -236,15 +245,7 @@ module gift_core(
       case (gift_core_ctrl_reg)
         CTRL_IDLE:
           begin
-            if (init)
-              begin
-                ready_new          = 1'h0;
-                ready_we           = 1'h1;
-                init_cipher        = 1'h1;
-                gift_core_ctrl_new = CTRL_INIT;
-                gift_core_ctrl_we  = 1'h1;
-              end
-            else if (next)
+            if (next)
               begin
                 ready_new          = 1'h0;
                 ready_we           = 1'h1;
@@ -253,15 +254,6 @@ module gift_core(
                 gift_core_ctrl_new = CTRL_NEXT;
                 gift_core_ctrl_we  = 1'h1;
               end
-          end
-
-
-        CTRL_INIT:
-          begin
-            ready_new          = 1'h1;
-            ready_we           = 1'h1;
-            gift_core_ctrl_new = CTRL_IDLE;
-            gift_core_ctrl_we  = 1'h1;
           end
 
 

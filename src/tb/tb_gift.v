@@ -60,6 +60,9 @@ module tb_gift();
   localparam ADDR_STATUS       = 8'h09;
   localparam STATUS_READY_BIT  = 0;
 
+  localparam ADDR_CONFIG       = 8'h0a;
+  localparam CONFIG_ENCDEC_BIT = 0;
+
   localparam ADDR_KEY0         = 8'h10;
   localparam ADDR_KEY1         = 8'h11;
   localparam ADDR_KEY2         = 8'h12;
@@ -153,8 +156,8 @@ module tb_gift();
       $display("Inputs and outputs:");
       $display("");
       $display("Core inputs and outputs:");
-      $display("init: 0x%01x, next: 0x%01x, ready: 0x%01x",
-               dut.core.init, dut.core.next, dut.core.ready);
+      $display("next: 0x%01x, encdec: 0x%01x, ready: 0x%01x",
+               dut.core.next, dut.core.encdec, dut.core.ready);
       $display("key:    0x%032x", dut.core.key);
       $display("block:  0x%032x", dut.core.block);
       $display("result: 0x%032x", dut.core.result);
@@ -288,15 +291,17 @@ module tb_gift();
 
   //----------------------------------------------------------------
   //----------------------------------------------------------------
-  task enctest(input integer tc, input reg [127 : 0] key,
-               input reg [127 : 0] plaintext, input reg [127 : 0] expected);
+  task enctest(input reg [127 : 0] key, input reg [127 : 0] plaintext,
+               input reg [127 : 0] expected);
     begin : enctest
       reg [127 : 0] encres;
+
+      tc_ctr = tc_ctr + 1;
 
       tb_monitor = 1'h1;
       #(CLK_PERIOD);
 
-      $display("*** TC%01d - Writing key and block to dut.", tc);
+      $display("*** TC%01d - Writing key and block to dut.", tc_ctr);
       write_word(ADDR_KEY0, key[031 : 000]);
       write_word(ADDR_KEY1, key[063 : 032]);
       write_word(ADDR_KEY2, key[095 : 064]);
@@ -307,15 +312,16 @@ module tb_gift();
       write_word(ADDR_BLOCK2, plaintext[095 : 064]);
       write_word(ADDR_BLOCK3, plaintext[127 : 096]);
 
-      write_word(ADDR_CTRL, 32'h1);
+      $display("*** TC%01d - Setting encryption mode.", tc_ctr);
+      write_word(ADDR_CONFIG, 32'h1);
 
 
-      $display("*** TC%01d - encryption started.", tc);
+      $display("*** TC%01d - encryption started.", tc_ctr);
       write_word(ADDR_CTRL, 32'h2);
       #(CLK_PERIOD);
 
       wait_ready();
-      $display("*** TC%01d - encryption completed.", tc);
+      $display("*** TC%01d - encryption completed.", tc_ctr);
       #(CLK_PERIOD);
       tb_monitor = 0;
 
@@ -330,13 +336,13 @@ module tb_gift();
 
       if (encres == expected)
         $display("*** TC%01d correct ciphertext generated: 0x%032x",
-                 tc, encres);
+                 tc_ctr, encres);
       else
         begin
           error_ctr = error_ctr + 1;
-          $display("*** TC%01d incorrect ciphertext generated", tc);
-          $display("*** TC%01d expected: 0x%032x", tc, expected);
-          $display("*** TC%01d got:      0x%032x", tc, encres);
+          $display("*** TC%01d incorrect ciphertext generated", tc_ctr);
+          $display("*** TC%01d expected: 0x%032x", tc_ctr, expected);
+          $display("*** TC%01d got:      0x%032x", tc_ctr, encres);
         end
     end
   endtask // enctest
@@ -354,14 +360,14 @@ module tb_gift();
       init_sim();
       reset_dut();
 
-      enctest(1, 128'h0, 128'h0,
+      enctest(128'h0, 128'h0,
               128'hcd0bd738_388ad3f6_68b15a36_ceb6ff92);
 
-      enctest(2, 128'hfedcba98_76543210_fedcba98_76543210,
+      enctest(128'hfedcba98_76543210_fedcba98_76543210,
               128'hfedcba98_76543210_fedcba98_76543210,
               128'h8422241a_6dbf5a93_46af4684_09ee0152);
 
-      enctest(3, 128'hd0f5c59a_7700d3e7_99028fa9_f90ad837,
+      enctest(128'hd0f5c59a_7700d3e7_99028fa9_f90ad837,
               128'he39c141f_a57dba43_f08a85b6_a91f86c1,
               128'h13ede67c_bdcc3dbf_400a62d6_977265ea);
 

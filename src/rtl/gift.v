@@ -68,6 +68,9 @@ module gift(
   localparam ADDR_STATUS       = 8'h09;
   localparam STATUS_READY_BIT  = 0;
 
+  localparam ADDR_CONFIG       = 8'h0a;
+  localparam CONFIG_ENCDEC_BIT = 0;
+
   localparam ADDR_KEY0         = 8'h10;
   localparam ADDR_KEY3         = 8'h13;
 
@@ -87,11 +90,11 @@ module gift(
   //----------------------------------------------------------------
   // Registers including update variables and write enable.
   //----------------------------------------------------------------
-  reg init_reg;
-  reg init_new;
-
   reg next_reg;
   reg next_new;
+
+  reg encdec_reg;
+  reg encdec_we;
 
   reg [31 : 0] block_reg [0 : 3];
   reg          block_we;
@@ -129,7 +132,7 @@ module gift(
                    .clk(clk),
                    .reset_n(reset_n),
 
-                   .init(init_reg),
+                   .encdec(encdec_reg),
                    .next(next_reg),
                    .ready(core_ready),
 
@@ -158,13 +161,17 @@ module gift(
           for (i = 0 ; i < 4 ; i = i + 1)
             key_reg[i] <= 32'h0;
 
-          init_reg   <= 1'h0;
+          encdec_reg <= 1'h0;
           next_reg   <= 1'h0;
         end
       else
         begin
-          init_reg <= init_new;
           next_reg <= next_new;
+
+          if (encdec_we)
+            begin
+              encdec_reg <= write_data[CONFIG_ENCDEC_BIT];
+            end
 
           if (key_we)
             key_reg[address[1 : 0]] <= write_data;
@@ -182,7 +189,7 @@ module gift(
   //----------------------------------------------------------------
   always @*
     begin : api
-      init_new      = 1'h0;
+      encdec_we     = 1'h0;
       next_new      = 1'h0;
       key_we        = 1'h0;
       block_we      = 1'h0;
@@ -195,9 +202,11 @@ module gift(
               if (core_ready)
                 begin
                   if (address == ADDR_CTRL) begin
-                    init_new = write_data[CTRL_INIT_BIT];
                     next_new = write_data[CTRL_NEXT_BIT];
                   end
+
+                  if (address == ADDR_CONFIG)
+                    encdec_we = 1'h1;
 
                   if ((address >= ADDR_KEY0) && (address <= ADDR_KEY3))
                     key_we = 1'h1;
