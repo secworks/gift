@@ -57,34 +57,7 @@ module gift(
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
-  localparam ADDR_NAME0        = 8'h00;
-  localparam ADDR_NAME1        = 8'h01;
-  localparam ADDR_VERSION      = 8'h02;
-
-  localparam ADDR_CTRL         = 8'h08;
-  localparam CTRL_INIT_BIT     = 0;
-  localparam CTRL_NEXT_BIT     = 1;
-
-  localparam ADDR_STATUS       = 8'h09;
-  localparam STATUS_READY_BIT  = 0;
-
-  localparam ADDR_CONFIG       = 8'h0a;
-  localparam CONFIG_ENCDEC_BIT = 0;
-
-  localparam ADDR_KEY0         = 8'h10;
-  localparam ADDR_KEY3         = 8'h13;
-
-  localparam ADDR_BLOCK0       = 8'h20;
-  localparam ADDR_BLOCK3       = 8'h23;
-
-  localparam ADDR_RESULT0      = 8'h30;
-  localparam ADDR_RESULT1      = 8'h31;
-  localparam ADDR_RESULT2      = 8'h32;
-  localparam ADDR_RESULT3      = 8'h33;
-
-  localparam CORE_NAME0        = 32'h67696675; // "gift"
-  localparam CORE_NAME1        = 32'h20202020; // "    "
-  localparam CORE_VERSION      = 32'h302e3130; // "0.10"
+`include "gift_api.vh"
 
 
   //----------------------------------------------------------------

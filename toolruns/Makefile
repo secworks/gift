@@ -37,7 +37,8 @@
 #===================================================================
 
 INCDIR   = ../src/rtl
-INCFILES = ../src/rtl/gift_round_functions.vh
+FUNCTIONS = ../src/rtl/gift_round_functions.vh
+API = ../src/rtl/gift_api.vh
 
 CORE_SRC=../src/rtl/gift_core.v
 TB_CORE_SRC =../src/tb/tb_gift_core.v
@@ -55,11 +56,11 @@ LINT_FLAGS = +1364-2001ext+ --lint-only  -Wall -Wno-fatal -Wno-DECLFILENAME
 all: top.sim core.sim
 
 
-top.sim: $(TB_TOP_SRC) $(TOP_SRC) $(INCFILES)
+top.sim: $(TB_TOP_SRC) $(TOP_SRC) $(FUNCTIONS) $(API)
 	$(CC) $(CC_FLAGS) -o top.sim -I$(INCDIR) $(TB_TOP_SRC) $(TOP_SRC)
 
 
-core.sim: $(TB_CORE_SRC) $(CORE_SRC) $(INCFILES)
+core.sim: $(TB_CORE_SRC) $(CORE_SRC) $(FUNCTIONS)
 	$(CC) $(CC_FLAGS) -o core.sim -I$(INCDIR) $(TB_CORE_SRC) $(CORE_SRC)
 
 
