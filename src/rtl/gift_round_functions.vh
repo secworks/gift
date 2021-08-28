@@ -294,7 +294,7 @@
   endfunction // UpdateKey
 
 
-  function [127 : 0] UpdateConstant(input [5 : 0] rc);
+  function [5 : 0] UpdateConstant(input [5 : 0] rc);
     begin
       UpdateConstant = {rc[4 : 0], rc[5] ^ rc[4] ^ 1'h1};
     end
