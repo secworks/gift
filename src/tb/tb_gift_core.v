@@ -280,9 +280,49 @@ module tb_gift_core();
 
 
   //----------------------------------------------------------------
+  // dectest
+  //----------------------------------------------------------------
+  task dectest(input reg [127 : 0] key, input reg [127 : 0] ciphertext,
+               input reg [127 : 0] expected);
+    begin
+      tc_ctr = tc_ctr + 1;
+
+      tb_monitor = 1'h0;
+      #(CLK_PERIOD);
+      $display("*** TC%01d - decryption started.", tc_ctr);
+      tb_encdec  = 0;
+      tb_key     = key;
+      tb_block   = ciphertext;
+
+      tb_next    = 1'h1;
+      #(CLK_PERIOD);
+      tb_next    = 1'h0;
+
+      wait_ready();
+      $display("*** TC%01d - decryption completed.", tc_ctr);
+      #(CLK_PERIOD);
+      tb_monitor = 0;
+
+      if (tb_result == expected)
+        $display("*** TC%01d correct plaintext generated: 0x%032x",
+                 tc_ctr, tb_result);
+      else
+        begin
+          error_ctr = error_ctr + 1;
+          $display("*** TC%01d incorrect plaintext generated", tc_ctr);
+          $display("*** expected: 0x%032x", expected);
+          $display("*** got:      0x%032x", tb_result);
+        end
+      $display("");
+    end
+  endtask // dectest
+
+
+  //----------------------------------------------------------------
   // gift_core_test
   //
   // Test vectors from:
+  // https://github.com/giftcipher/gift/
   //----------------------------------------------------------------
   initial
     begin : gift_core_test
@@ -292,7 +332,9 @@ module tb_gift_core();
       init_sim();
       reset_dut();
 
-      enctest(128'h0, 128'h0,
+
+      enctest(128'h0,
+              128'h0,
               128'hcd0bd738_388ad3f6_68b15a36_ceb6ff92);
 
       enctest(128'hfedcba98_76543210_fedcba98_76543210,
@@ -302,6 +344,20 @@ module tb_gift_core();
       enctest(128'hd0f5c59a_7700d3e7_99028fa9_f90ad837,
               128'he39c141f_a57dba43_f08a85b6_a91f86c1,
               128'h13ede67c_bdcc3dbf_400a62d6_977265ea);
+
+
+      dectest(128'h0,
+              128'hcd0bd738_388ad3f6_68b15a36_ceb6ff92,
+              128'h0);
+
+      dectest(128'hfedcba98_76543210_fedcba98_76543210,
+              128'h8422241a_6dbf5a93_46af4684_09ee0152,
+              128'hfedcba98_76543210_fedcba98_76543210);
+
+      dectest(128'hd0f5c59a_7700d3e7_99028fa9_f90ad837,
+              128'h13ede67c_bdcc3dbf_400a62d6_977265ea,
+              128'he39c141f_a57dba43_f08a85b6_a91f86c1);
+
 
       display_test_result();
       $display("");
