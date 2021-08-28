@@ -192,11 +192,11 @@ module gift_core(
       enc_permute_state = PermBits(enc_subcell_state);
       enc_addkey_state  = AddRoundKey(enc_permute_state, key_reg, enc_rc_new);
 
-      dec_key_new       = UpdateKey(key_reg);
-      dec_rc_new        = UpdateConstant(rc_reg);
-      dec_subcell_state = SubCells(state_reg);
-      dec_permute_state = PermBits(dec_subcell_state);
-      dec_addkey_state  = AddRoundKey(dec_permute_state, key_reg, dec_rc_new);
+      dec_key_new       = InvUpdateKey(key_reg);
+      dec_rc_new        = InvUpdateConstant(rc_reg);
+      dec_addkey_state  = InvAddRoundKey(state_reg, key_reg, dec_rc_new);
+      dec_permute_state = InvPermBits(dec_addkey_state);
+      dec_subcell_state = InvSubCells(dec_permute_state);
 
       if (init_cipher) begin
         // Sample all inputs.
@@ -226,7 +226,7 @@ module gift_core(
           key_we    = 1'h1;
           rc_new    = dec_rc_new;
           rc_we     = 1'h1;
-          state_new = dec_addkey_state;
+          state_new = dec_subcell_state;
           state_we  = 1'h1;
         end
       end

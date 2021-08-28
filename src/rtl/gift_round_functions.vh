@@ -331,7 +331,6 @@
   endfunction // inv_gs
 
 
-
   function [127 : 0] InvSubCells(input [127 : 0] x);
     begin
       InvSubCells[003 : 000] = inv_gs(x[003 : 000]);
@@ -368,7 +367,6 @@
       InvSubCells[127 : 124] = inv_gs(x[127 : 124]);
     end
   endfunction // InvSubCells
-
 
 
   function [127 : 0] InvPermBits(input [127 : 0] x);
@@ -503,6 +501,57 @@
       InvPermBits[127] = x[031];
     end
   endfunction // InvPermBits
+
+
+  function [127 : 0] InvAddRoundKey(input [127 : 0] state,
+                                 input [127 : 0] k,
+                                 input [5 : 0]   rc);
+    begin : ark
+      reg [31 : 0] u;
+      reg [31 : 0] v;
+      reg [127 : 0] s;
+      integer i;
+
+      u = k[095 : 064];
+      v = k[031 : 000];
+
+      s = state;
+      for (i = 0 ; i < 32 ; i = i + 1) begin
+        s[(4 * i + 2)] = state[(4 * i + 2)] ^ u[i];
+        s[(4 * i + 1)] = state[(4 * i + 1)] ^ v[i];
+      end
+
+      s[127] = s[127] ^ 1'h1;
+      s[023] = s[023] ^ rc[5];
+      s[019] = s[019] ^ rc[4];
+      s[015] = s[015] ^ rc[3];
+      s[011] = s[011] ^ rc[2];
+      s[007] = s[007] ^ rc[1];
+      s[003] = s[003] ^ rc[0];
+
+      InvAddRoundKey = s;
+    end
+  endfunction // InvAddRoundkey
+
+
+  function [127 : 0] InvUpdateKey(input [127 : 0] k);
+    begin : udk
+      reg [15 : 0] rot12_k0;
+      reg [15 : 0] rot2_k1;
+
+      rot12_k0 = {k[011 : 000], k[015 : 012]};
+      rot2_k1  = {k[017 : 016], k[031 : 018]};
+
+      InvUpdateKey = {rot2_k1, rot12_k0, k[127 : 032]};
+    end
+  endfunction // InvUpdateKey
+
+
+  function [5 : 0] InvUpdateConstant(input [5 : 0] rc);
+    begin
+      InvUpdateConstant = {rc[4 : 0], rc[5] ^ rc[4] ^ 1'h1};
+    end
+  endfunction // InvUpdateConstant
 
 
 //======================================================================
