@@ -60,7 +60,6 @@ module gift_core(
   localparam GIFT128_ROUNDS = 6'h28;
 
   localparam CTRL_IDLE  = 2'h0;
-  localparam CTRL_INIT  = 2'h1;
   localparam CTRL_NEXT  = 2'h2;
 
 
@@ -167,9 +166,17 @@ module gift_core(
   //----------------------------------------------------------------
   always @*
     begin : gift_logic
-      reg [127 : 0] subcell_state;
-      reg [127 : 0] permute_state;
-      reg [127 : 0] addkey_state;
+      reg [127 : 0] enc_subcell_state;
+      reg [127 : 0] enc_permute_state;
+      reg [127 : 0] enc_addkey_state;
+      reg [127 : 0] enc_key_new;
+      reg [5 : 0]   enc_rc_new;
+
+      reg [127 : 0] dec_subcell_state;
+      reg [127 : 0] dec_permute_state;
+      reg [127 : 0] dec_addkey_state;
+      reg [127 : 0] dec_key_new;
+      reg [5 : 0]   dec_rc_new;
 
       key_new   = 128'h0;
       key_we    = 1'h0;
@@ -179,13 +186,20 @@ module gift_core(
       state_new = 128'h0;
       state_we  = 1'h0;
 
-      key_new       = UpdateKey(key_reg);
-      rc_new        = UpdateConstant(rc_reg);
-      subcell_state = SubCells(state_reg);
-      permute_state = PermBits(subcell_state);
-      addkey_state  = AddRoundKey(permute_state, key_reg, rc_new);
+      enc_key_new       = UpdateKey(key_reg);
+      enc_rc_new        = UpdateConstant(rc_reg);
+      enc_subcell_state = SubCells(state_reg);
+      enc_permute_state = PermBits(enc_subcell_state);
+      enc_addkey_state  = AddRoundKey(enc_permute_state, key_reg, enc_rc_new);
+
+      dec_key_new       = UpdateKey(key_reg);
+      dec_rc_new        = UpdateConstant(rc_reg);
+      dec_subcell_state = SubCells(state_reg);
+      dec_permute_state = PermBits(dec_subcell_state);
+      dec_addkey_state  = AddRoundKey(dec_permute_state, key_reg, dec_rc_new);
 
       if (init_cipher) begin
+        // Sample all inputs.
         key_new   = key;
         key_we    = 1'h1;
         rc_new    = 6'h0;
@@ -194,11 +208,27 @@ module gift_core(
         state_new = block;
         state_we  = 1'h1;
       end
+
       else if (update_cipher) begin
-        key_we    = 1'h1;
-        rc_we     = 1'h1;
-        state_new = addkey_state;
-        state_we  = 1'h1;
+        if (encdec_reg) begin
+          // Encryption.
+          key_new   = enc_key_new;
+          key_we    = 1'h1;
+          rc_new    = enc_rc_new;
+          rc_we     = 1'h1;
+          state_new = enc_addkey_state;
+          state_we  = 1'h1;
+        end
+
+        else begin
+          // Decryption.
+          key_new   = dec_key_new;
+          key_we    = 1'h1;
+          rc_new    = dec_rc_new;
+          rc_we     = 1'h1;
+          state_new = dec_addkey_state;
+          state_we  = 1'h1;
+        end
       end
     end
 

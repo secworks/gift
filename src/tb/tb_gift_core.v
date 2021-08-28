@@ -133,9 +133,13 @@ module tb_gift_core();
       $display("result: 0x%032x", dut.result);
       $display("");
       $display("Intermediate values:");
-      $display("subcell_state: 0x%032x", dut.gift_logic.subcell_state);
-      $display("permute_state: 0x%032x", dut.gift_logic.permute_state);
-      $display("addkey_state:  0x%032x", dut.gift_logic.addkey_state);
+      $display("enc_subcell_state: 0x%032x", dut.gift_logic.enc_subcell_state);
+      $display("enc_permute_state: 0x%032x", dut.gift_logic.enc_permute_state);
+      $display("enc_addkey_state:  0x%032x", dut.gift_logic.enc_addkey_state);
+      $display("");
+      $display("dec_subcell_state: 0x%032x", dut.gift_logic.dec_subcell_state);
+      $display("dec_permute_state: 0x%032x", dut.gift_logic.dec_permute_state);
+      $display("dec_addkey_state:  0x%032x", dut.gift_logic.dec_addkey_state);
       $display("");
       $display("Internal state:");
       $display("ready_reg:          0x%1x,   ready_new: 0x%1x,   ready_we: 0x%1x",
@@ -144,7 +148,7 @@ module tb_gift_core();
                dut.state_reg, dut.state_new, dut.state_we);
       $display("key_reg:            0x%032x, key_new:   0x%032x, key_we:   0x%1x",
                dut.key_reg, dut.key_new, dut.key_we);
-      $display("rc_reg:             0x%08x, rc_new:   0x%08x, rc_we:   0x%1x",
+      $display("rc_reg:             0x%02x, rc_new:   0x%02x, rc_we:   0x%1x",
                dut.rc_reg, dut.rc_new, dut.rc_we);
       $display("round_ctr_reg:      0x%08x, round_ctr_new: 0x%08x, round_ctr_we: 0x%1x",
                dut.round_ctr_reg, dut.round_ctr_new, dut.round_ctr_we);
@@ -287,7 +291,7 @@ module tb_gift_core();
     begin
       tc_ctr = tc_ctr + 1;
 
-      tb_monitor = 1'h0;
+      tb_monitor = 1'h1;
       #(CLK_PERIOD);
       $display("*** TC%01d - decryption started.", tc_ctr);
       tb_encdec  = 0;
