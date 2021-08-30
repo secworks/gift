@@ -30,20 +30,20 @@ mkdir workspace && cd workspace
 
 Register prince as a library in the workspace
 ~~~
-fusesoc library add prince /path/to/prince
+fusesoc library add gift /path/to/gift
 ~~~
 ...if repo is available locally or...
 ...to get the upstream repo
 ~~~
-fusesoc library add prince https://github.com/secworks/prince
+fusesoc library add gift https://github.com/secworks/gift
 ~~~
 
 Run tb_prince testbench
 ~~~
-fusesoc run --target=tb_prince secworks:crypto:prince
+fusesoc run --target=tb_gift secworks:crypto:gift
 ~~~
 
 Run with modelsim instead of default tool (icarus)
 ~~~
-fusesoc run --target=tb_prince --tool=modelsim secworks:crypto:prince
+fusesoc run --target=tb_gift --tool=modelsim secworks:crypto:gift
 ~~~
