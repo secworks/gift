@@ -547,9 +547,55 @@
   endfunction // InvUpdateKey
 
 
-  function [5 : 0] InvUpdateConstant(input [5 : 0] rc);
-    begin
-      InvUpdateConstant = {rc[4 : 0], rc[5] ^ rc[4] ^ 1'h1};
+  function [5 : 0] InvUpdateConstant(input [5 : 0] round);
+    begin : irc
+      reg [5 : 0] rc;
+
+      case (round)
+        00 : rc = 6'h01;
+        01 : rc = 6'h03;
+        02 : rc = 6'h07;
+        03 : rc = 6'h0f;
+        04 : rc = 6'h1f;
+        05 : rc = 6'h3e;
+        06 : rc = 6'h3d;
+        07 : rc = 6'h3b;
+        08 : rc = 6'h37;
+        09 : rc = 6'h2f;
+        10 : rc = 6'h1e;
+        11 : rc = 6'h3c;
+        12 : rc = 6'h39;
+        13 : rc = 6'h33;
+        14 : rc = 6'h27;
+        15 : rc = 6'h0e;
+        16 : rc = 6'h1d;
+        17 : rc = 6'h3a;
+        18 : rc = 6'h35;
+        19 : rc = 6'h2b;
+        20 : rc = 6'h16;
+        21 : rc = 6'h2c;
+        22 : rc = 6'h18;
+        23 : rc = 6'h30;
+        24 : rc = 6'h21;
+        25 : rc = 6'h02;
+        26 : rc = 6'h05;
+        27 : rc = 6'h0b;
+        28 : rc = 6'h17;
+        29 : rc = 6'h2e;
+        30 : rc = 6'h1c;
+        31 : rc = 6'h38;
+        32 : rc = 6'h31;
+        33 : rc = 6'h23;
+        34 : rc = 6'h06;
+        35 : rc = 6'h0d;
+        36 : rc = 6'h1b;
+        37 : rc = 6'h36;
+        38 : rc = 6'h2d;
+        39 : rc = 6'h1a;
+        default : rc = 6'h0;
+      endcase // case (round)
+
+      InvUpdateConstant = rc;
     end
   endfunction // InvUpdateConstant
 
